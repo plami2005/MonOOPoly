@@ -1,5 +1,9 @@
 #include "Cottage.h"
 
-int Cottage::modifyRent(int baseRent) const {
-    return baseRent + (baseRent * 15) / 100;
+int Cottage::getRentBonus(int baseRent) const {
+    return baseRent * 15 / 100;
+}
+
+Mortgage* Cottage::clone() const {
+    return new Cottage(*this);
 }

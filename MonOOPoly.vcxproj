@@ -19,22 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bank.h" />
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="CardDeck.h" />
+    <ClInclude Include="CardField.h" />
     <ClInclude Include="Castle.h" />
     <ClInclude Include="Cottage.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="GoToJailField.h" />
+    <ClInclude Include="GroupPaymentCard.h" />
     <ClInclude Include="Mortgage.h" />
+    <ClInclude Include="MovePositionCard.h" />
     <ClInclude Include="MyString.h" />
-    <ClInclude Include="MyVector.hpp" />
+    <ClInclude Include="PaymentCard.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Property.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bank.cpp" />
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="CardDeck.cpp" />
+    <ClCompile Include="CardField.cpp" />
     <ClCompile Include="Castle.cpp" />
     <ClCompile Include="Cottage.cpp" />
-    <ClCompile Include="Field.cpp" />
+    <ClCompile Include="GoToJailField.cpp" />
+    <ClCompile Include="GroupPaymentCard.cpp" />
+    <ClCompile Include="MovePositionCard.cpp" />
     <ClCompile Include="MyString.cpp" />
+    <ClCompile Include="PaymentCard.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Property.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

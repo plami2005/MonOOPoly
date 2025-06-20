@@ -1,19 +1,59 @@
 #include "Player.h"
-#include <cstring>
+#include "Property.h"
 #include <iostream>
 
-Player::Player() : name("Unnamed"), balance(1500), position(0), inJail(false) {}
-
-Player::Player(int playerId, const MyString& name, int balance) : name(name), balance(1500), position(0), inJail(false) {}
-
-void Player::move(int steps) {
-    if (!inJail)
-        position = (position + steps) % 40; // 40 позиции по дъската
+void Player::resizeProperties() {
+    int newCapacity = propertyCapacity * 2;
+    if (newCapacity == 0) newCapacity = 4;
+    Property** newArr = new Property * [newCapacity];
+    for (int i = 0; i < propertyCount; ++i)
+        newArr[i] = ownedProperties[i];
+    delete[] ownedProperties;
+    ownedProperties = newArr;
+    propertyCapacity = newCapacity;
 }
 
-void Player::pay(int amount) {
-    balance -= amount;
-    if (balance < 0) balance = 0;
+Player::Player() : name("Player"), balance(1500), position(0), inJail(false), jailTurns(0), ownedProperties(nullptr), propertyCount(0), propertyCapacity(0) {}
+
+Player::Player(const MyString& name) : name(name), balance(1500), position(0), inJail(false), jailTurns(0), ownedProperties(nullptr), propertyCount(0), propertyCapacity(0) {}
+
+Player::Player(const Player& other) : name(other.name), balance(other.balance), position(other.position), inJail(other.inJail), jailTurns(other.jailTurns), propertyCount(other.propertyCount), propertyCapacity(other.propertyCapacity) {
+    ownedProperties = new Property * [propertyCapacity];
+    for (int i = 0; i < propertyCount; ++i)
+        ownedProperties[i] = other.ownedProperties[i];
+}
+
+Player& Player::operator=(const Player& other) {
+    if (this != &other) {
+        delete[] ownedProperties;
+        name = other.name;
+        balance = other.balance;
+        position = other.position;
+        inJail = other.inJail;
+        jailTurns = other.jailTurns;
+        propertyCount = other.propertyCount;
+        propertyCapacity = other.propertyCapacity;
+        ownedProperties = new Property * [propertyCapacity];
+        for (int i = 0; i < propertyCount; ++i)
+            ownedProperties[i] = other.ownedProperties[i];
+    }
+    return *this;
+}
+
+Player::~Player() {
+    delete[] ownedProperties;
+}
+
+void Player::move(int steps) {
+    position = (position + steps) % 40; // assuming 40 fields
+}
+
+bool Player::pay(int amount) {
+    if (balance >= amount) {
+        balance -= amount;
+        return true;
+    }
+    return false;
 }
 
 void Player::receive(int amount) {
@@ -23,7 +63,7 @@ void Player::receive(int amount) {
 void Player::goToJail() {
     inJail = true;
     jailTurns = 0;
-    position = 10; // позиция за "Jail"
+    position = 10; // jail position
 }
 
 void Player::leaveJail() {
@@ -32,72 +72,18 @@ void Player::leaveJail() {
 }
 
 bool Player::isBankrupt() const {
-    return balance <= 0;
+    return balance < 0;
 }
 
-int Player::getPlayerId() const
-{
-    return playerId;
+void Player::buyProperty(Property* prop) {
+    if (propertyCount >= propertyCapacity)
+        resizeProperties();
+    ownedProperties[propertyCount++] = prop;
 }
 
-const MyString& Player::getName() const {
-    return name;
-}
-
-int Player::getBalance() const {
-    return balance;
-}
-
-int Player::getPosition() const {
-    return position;
-}
-
-int Player::getPairsCount() const
-{
-    return pairsCount;
-}
-
-bool Player::isInJail() const {
-    return inJail;
-}
-
-void Player::addProperty(Property* property) {
-    properties.push_back(property);
-}
-
-void Player::removeProperty(Property* property)
-{
-    properties.erase(properties.find(property));
-}
-
-const MyVector<Property*>& Player::getProperties() const {
-    return properties;
-}
-
-void Player::saveToBinary(std::ofstream& out) const {
-    size_t len = name.getSize();
-    out.write((char*)&len, sizeof(len));
-    out.write(name.c_str(), len);
-
-    out.write((char*)&balance, sizeof(balance));
-    out.write((char*)&position, sizeof(position));
-    out.write((char*)&inJail, sizeof(inJail));
-    out.write((char*)&jailTurns, sizeof(jailTurns));
-}
-
-void Player::loadFromBinary(std::ifstream& in) {
-
-    size_t len;
-    in.read((char*)&len, sizeof(len));
-
-    char* buff = new char[len + 1];
-    in.read(buff, len);
-    buff[len] = '\0';
-    name = MyString(buff);
-    delete[] buff;
-
-    in.read((char*)&balance, sizeof(balance));
-    in.read((char*)&position, sizeof(position));
-    in.read((char*)&inJail, sizeof(inJail));
-    in.read((char*)&jailTurns, sizeof(jailTurns));
-}
+const MyString& Player::getName() const { return name; }
+int Player::getBalance() const { return balance; }
+int Player::getPosition() const { return position; }
+bool Player::getInJail() const { return inJail; }
+int Player::getPropertyCount() const { return propertyCount; }
+Property* Player::getPropertyAt(int index) const { return ownedProperties[index]; }

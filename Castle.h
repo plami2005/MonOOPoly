@@ -3,5 +3,6 @@
 
 class Castle : public Mortgage {
 public:
-    int modifyRent(int baseRent) const override;
+    int getRentBonus(int baseRent) const override;
+    Mortgage* clone() const override;
 };

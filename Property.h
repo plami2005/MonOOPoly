@@ -1,36 +1,37 @@
 #pragma once
-#include "Mortgage.h"
-#include "MyString.h"
 #include "Field.h"
+#include "MyString.h"
+#include "Mortgage.h"
+
+class Player;
 
 class Property : public Field {
-private:
     MyString name;
     int price;
     int baseRent;
-    Mortgage* mortgage;
-    bool isCastle;
+    Player* owner;
+    Mortgage** mortgages;
+    int mortgageCount;
+    int mortgageCapacity;
 
-    void copyFrom(const Property& other);
-    void free();
+    void resizeMortgages();
 
 public:
-    Property(const MyString& name, int price, int rent);
+    Property();
+    Property(const MyString& name, int price, int baseRent);
     Property(const Property& other);
     Property& operator=(const Property& other);
     ~Property();
 
-    Property(Property&& other);
-    Property& operator=(Property&& other);
+    void onLand(Player& player) override;
+    void buildCottage();
+    void buildCastle();
+
+    int calculateRent() const;
+    Player* getOwner() const;
+    void setOwner(Player* newOwner);
 
     const MyString& getName() const;
-    int getRent() const;
     int getPrice() const;
-
-    void upgradeToCottage();
-    void upgradeToCastle();
-    bool hasMortgage() const;
-    bool isUpgradedToCastle() const;
-
-    void onLand(Player& player) override;
+    int getBaseRent() const;
 };
