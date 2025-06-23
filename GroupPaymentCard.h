@@ -8,7 +8,7 @@ class GroupPaymentCard : public Card {
     int playerCount;
 
 public:
-    GroupPaymentCard(int amount, Player** allPlayers, int playerCount);
+    GroupPaymentCard(int amount, Player** allPlayers, int playerCount, const MyString& desc);
     void applyEffect(Player& player) override;
     Card* clone() const override;
 };

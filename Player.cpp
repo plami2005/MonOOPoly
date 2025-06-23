@@ -45,7 +45,7 @@ Player::~Player() {
 }
 
 void Player::move(int steps) {
-    position = (position + steps) % 40; // assuming 40 fields
+    position = (position + steps) % 40; // 40 fields
 }
 
 bool Player::pay(int amount) {
@@ -63,7 +63,7 @@ void Player::receive(int amount) {
 void Player::goToJail() {
     inJail = true;
     jailTurns = 0;
-    position = 10; // jail position
+    position = 10; // jail 
 }
 
 void Player::leaveJail() {
@@ -87,3 +87,23 @@ int Player::getPosition() const { return position; }
 bool Player::getInJail() const { return inJail; }
 int Player::getPropertyCount() const { return propertyCount; }
 Property* Player::getPropertyAt(int index) const { return ownedProperties[index]; }
+void Player::giveJailCard() {
+    hasJailCard = true;
+}
+
+bool Player::ownsJailCard() const {
+    return hasJailCard;
+}
+
+bool Player::useJailCard() {
+    if (hasJailCard) {
+        hasJailCard = false;
+        return true;
+    }
+    return false;
+}
+
+void Player::setPosition(int newPos) {
+    position = newPos % 40;
+}
+

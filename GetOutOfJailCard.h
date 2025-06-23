@@ -1,11 +1,10 @@
 #pragma once
 #include "Card.h"
 
-class MovePositionCard : public Card {
-    int offset;
-
+class GetOutOfJailCard : public Card {
 public:
-    MovePositionCard(int offset, const MyString& desc);
+    GetOutOfJailCard(const MyString& desc);
+public:
     void applyEffect(Player& player) override;
     Card* clone() const override;
 };

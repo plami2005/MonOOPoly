@@ -12,6 +12,7 @@ class Player {
     Property** ownedProperties;
     int propertyCount;
     int propertyCapacity;
+    bool hasJailCard = false;
 
     void resizeProperties();
 
@@ -37,4 +38,8 @@ public:
     bool getInJail() const;
     int getPropertyCount() const;
     Property* getPropertyAt(int index) const;
+    void giveJailCard();
+    bool useJailCard();
+    bool ownsJailCard() const;
+    void setPosition(int newPos);
 };

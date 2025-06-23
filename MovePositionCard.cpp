@@ -1,10 +1,12 @@
 #include "MovePositionCard.h"
 #include <iostream>
+#include "Player.h"
 
-MovePositionCard::MovePositionCard(int offset) : offset(offset) {}
+MovePositionCard::MovePositionCard(int offset, const MyString& desc)
+    : Card(desc), offset(offset) {}
 
 void MovePositionCard::applyEffect(Player& player) {
-    std::cout << player.getName() << " moves " << offset << " steps.\n";
+    std::cout << getDescription() << "\n";
     player.move(offset);
 }
 

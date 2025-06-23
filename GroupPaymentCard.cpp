@@ -1,8 +1,8 @@
 #include "GroupPaymentCard.h"
 #include <iostream>
 
-GroupPaymentCard::GroupPaymentCard(int amount, Player** allPlayers, int playerCount)
-    : amount(amount), allPlayers(allPlayers), playerCount(playerCount) {}
+GroupPaymentCard::GroupPaymentCard(int amount, Player** allPlayers, int playerCount, const MyString& desc) 
+    : Card(desc), amount(amount), allPlayers(allPlayers), playerCount(playerCount) {}
 
 void GroupPaymentCard::applyEffect(Player& player) {
     if (amount >= 0) {

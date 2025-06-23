@@ -49,6 +49,13 @@ void CardDeck::addCard(Card* card) {
 
 Card* CardDeck::drawCard() {
     if (size == 0) return nullptr;
-    int index = rand() % size;
-    return cards[index];
+    Card* drawn = cards[drawIndex];
+    for (int i = drawIndex; i < size - 1; ++i)
+        cards[i] = cards[i + 1];
+    size--;
+    return drawn;
+}
+
+void CardDeck::returnCardToBottom(Card* card) {
+    addCard(card);
 }

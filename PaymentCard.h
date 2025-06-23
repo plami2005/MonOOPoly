@@ -5,7 +5,7 @@ class PaymentCard : public Card {
     int amount;
 
 public:
-    PaymentCard(int amount);
+    PaymentCard(int amount, const MyString& desc);
     void applyEffect(Player& player) override;
     Card* clone() const override;
 };

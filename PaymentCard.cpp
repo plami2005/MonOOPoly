@@ -1,7 +1,7 @@
 #include "PaymentCard.h"
 #include <iostream>
 
-PaymentCard::PaymentCard(int amount) : amount(amount) {}
+PaymentCard::PaymentCard(int amount, const MyString& desc) : Card(desc), amount(amount) {}
 
 void PaymentCard::applyEffect(Player& player) {
     if (amount >= 0) {

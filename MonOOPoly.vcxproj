@@ -25,16 +25,21 @@
     <ClInclude Include="CardDeck.h" />
     <ClInclude Include="CardField.h" />
     <ClInclude Include="Castle.h" />
+    <ClInclude Include="ColorUtils.h" />
     <ClInclude Include="Cottage.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="GetOutOfJailCard.h" />
+    <ClInclude Include="GoToFieldCard.h" />
     <ClInclude Include="GoToJailField.h" />
     <ClInclude Include="GroupPaymentCard.h" />
+    <ClInclude Include="Monopoly.h" />
     <ClInclude Include="Mortgage.h" />
     <ClInclude Include="MovePositionCard.h" />
     <ClInclude Include="MyString.h" />
     <ClInclude Include="PaymentCard.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Property.h" />
+    <ClInclude Include="Trade.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bank.cpp" />
@@ -42,15 +47,20 @@
     <ClCompile Include="CardDeck.cpp" />
     <ClCompile Include="CardField.cpp" />
     <ClCompile Include="Castle.cpp" />
+    <ClCompile Include="Color.h" />
     <ClCompile Include="Cottage.cpp" />
+    <ClCompile Include="GetOutOfJailCard.cpp" />
+    <ClCompile Include="GoToFieldCard.cpp" />
     <ClCompile Include="GoToJailField.cpp" />
     <ClCompile Include="GroupPaymentCard.cpp" />
+    <ClCompile Include="Monopoly.cpp" />
     <ClCompile Include="MovePositionCard.cpp" />
     <ClCompile Include="MyString.cpp" />
     <ClCompile Include="PaymentCard.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Property.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Trade.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

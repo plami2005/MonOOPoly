@@ -5,6 +5,7 @@ class CardDeck {
     Card** cards;
     int size;
     int capacity;
+    int drawIndex;
 
 public:
     CardDeck();
@@ -14,4 +15,5 @@ public:
 
     void addCard(Card* card);
     Card* drawCard();
+    void returnCardToBottom(Card* card);
 };

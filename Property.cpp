@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "Cottage.h"
 #include "Castle.h"
+#include "Color.h"
+#include "ColorUtils.h"
 #include <iostream>
 
 void Property::resizeMortgages() {
@@ -17,15 +19,18 @@ void Property::resizeMortgages() {
     mortgageCapacity = newCap;
 }
 
-Property::Property() : name("Unnamed"), price(0), baseRent(0), owner(nullptr), mortgages(nullptr), mortgageCount(0), mortgageCapacity(0) {}
+Property::Property() : name("Unnamed"), price(0), baseRent(0), owner(nullptr), mortgages(nullptr), mortgageCount(0), mortgageCapacity(0){
+    color = Color::None;
+}
 
-Property::Property(const MyString& name, int price, int baseRent)
-    : name(name), price(price), baseRent(baseRent), owner(nullptr), mortgages(nullptr), mortgageCount(0), mortgageCapacity(0) {}
+Property::Property(const MyString& name, int price, int baseRent, Color color)
+    : name(name), price(price), baseRent(baseRent), owner(nullptr), mortgages(nullptr), mortgageCount(0), mortgageCapacity(0), color(color){}
 
 Property::Property(const Property& other) : name(other.name), price(other.price), baseRent(other.baseRent), owner(other.owner), mortgageCount(other.mortgageCount), mortgageCapacity(other.mortgageCapacity) {
     mortgages = new Mortgage * [mortgageCapacity];
     for (int i = 0; i < mortgageCount; ++i)
         mortgages[i] = other.mortgages[i]->clone();
+    color = other.color;
 }
 
 Property& Property::operator=(const Property& other) {
@@ -40,6 +45,7 @@ Property& Property::operator=(const Property& other) {
         owner = other.owner;
         mortgageCount = other.mortgageCount;
         mortgageCapacity = other.mortgageCapacity;
+        color = other.color;
 
         mortgages = new Mortgage * [mortgageCapacity];
         for (int i = 0; i < mortgageCount; ++i)
@@ -57,7 +63,7 @@ Property::~Property() {
 void Property::onLand(Player& player) {
     if (!owner) {
         std::cout << player.getName() << " landed on " << name << ". It costs $" << price << ".\n";
-        // purchase logic placeholder
+        // purchase
     }
     else if (owner != &player) {
         int rent = calculateRent();
@@ -92,3 +98,8 @@ void Property::setOwner(Player* newOwner) { owner = newOwner; }
 const MyString& Property::getName() const { return name; }
 int Property::getPrice() const { return price; }
 int Property::getBaseRent() const { return baseRent; }
+
+Color Property::getColor() const {
+    return color;
+}
+
