@@ -25,14 +25,12 @@
     <ClInclude Include="CardDeck.h" />
     <ClInclude Include="CardField.h" />
     <ClInclude Include="Castle.h" />
-    <ClInclude Include="ColorUtils.h" />
     <ClInclude Include="Cottage.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="GetOutOfJailCard.h" />
     <ClInclude Include="GoToFieldCard.h" />
     <ClInclude Include="GoToJailField.h" />
     <ClInclude Include="GroupPaymentCard.h" />
-    <ClInclude Include="HeterogeneousContainer.hpp" />
     <ClInclude Include="Monopoly.h" />
     <ClInclude Include="Mortgage.h" />
     <ClInclude Include="MovePositionCard.h" />
@@ -49,7 +47,6 @@
     <ClCompile Include="CardDeck.cpp" />
     <ClCompile Include="CardField.cpp" />
     <ClCompile Include="Castle.cpp" />
-    <ClCompile Include="Color.h" />
     <ClCompile Include="Cottage.cpp" />
     <ClCompile Include="GetOutOfJailCard.cpp" />
     <ClCompile Include="GoToFieldCard.cpp" />

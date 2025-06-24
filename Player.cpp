@@ -79,7 +79,6 @@ bool Player::isBankrupt() const {
 void Player::bankrupt() {
     bankruptFlag = true;
     balance = 0;
-    // Собственостите ще се обработят от Board
 }
 
 void Player::buyProperty(Property* prop) {

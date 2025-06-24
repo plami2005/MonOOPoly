@@ -286,7 +286,7 @@ bool Monopoly::playTurn() {
     }
 
     std::cout << "End of turn. Current balance: $" << currentPlayer->getBalance() << "\n";
-    return false; // double rolls now end unless further extended
+    return false; 
 }
 
 

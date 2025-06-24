@@ -75,12 +75,6 @@
     <ClInclude Include="GetOutOfJailCard.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColorUtils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeterogeneousContainer.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="MyVector.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -138,9 +132,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GetOutOfJailCard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

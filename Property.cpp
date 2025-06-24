@@ -61,7 +61,6 @@ Property::~Property() {
 void Property::onLand(Player& player) {
     if (!owner) {
         std::cout << player.getName() << " landed on " << name << ". It costs $" << price << ".\n";
-        // purchase
     }
     else if (owner != &player) {
         int rent = calculateRent();

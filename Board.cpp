@@ -64,7 +64,6 @@ void Board::offerBuildingOptions(Player* player) {
         if (selected->getOwner() != player || selected->getColor() != col)
             continue;
 
-        // Преброяваме къщите на имота
         int cottageCount = 0;
         for (int m = 0; m < selected->getMortgageCount(); ++m) {
             if (selected->getMortgageAt(m)->getType() == MortgageType::Cottage)
@@ -87,11 +86,9 @@ void Board::offerBuildingOptions(Player* player) {
     }
 }
 
-// Премести това в началото на Board.cpp, преди offerBuildingOptions
 Property* Board::tryConvertToProperty(Field* field) {
     return field ? field->asProperty() : nullptr;
 }
-
 
 void Board::handleLanding(Player* player) {
     Field* current = getField(player->getPosition());

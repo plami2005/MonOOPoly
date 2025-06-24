@@ -19,7 +19,5 @@ public:
     const MyVector<Property*>& getAllProperties() const;
     void offerBuildingOptions(Player* player);
     void handleLanding(Player* player);
-    // В началото на Board.cpp
     Property* tryConvertToProperty(Field* field);
-
 };

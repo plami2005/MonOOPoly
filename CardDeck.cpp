@@ -1,9 +1,8 @@
 #include "CardDeck.h"
-#include <cstdlib>
 #include <ctime>
 
 CardDeck::CardDeck() : cards(nullptr), size(0), capacity(0) {
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
+    std::srand((unsigned)std::time(nullptr));
 }
 
 CardDeck::CardDeck(const CardDeck& other) : size(other.size), capacity(other.capacity) {
