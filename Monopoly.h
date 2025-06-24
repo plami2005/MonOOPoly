@@ -18,9 +18,11 @@ public:
     Monopoly(int playerCount);
     ~Monopoly();
 
+    Player* getWinner() const;
     void startGame();
-    void playTurn();
+    bool playTurn(); 
     bool isGameOver() const;
     void printGameState() const;
     Board* getBoard() const;
+    void printCardDeck() const;
 };

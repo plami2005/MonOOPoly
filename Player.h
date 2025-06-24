@@ -1,6 +1,6 @@
 #pragma once
 #include "MyString.h"
-
+#include "Board.h"
 class Property;
 
 class Player {
@@ -13,6 +13,8 @@ class Player {
     int propertyCount;
     int propertyCapacity;
     bool hasJailCard = false;
+    bool bankruptFlag = false;
+
 
     void resizeProperties();
 
@@ -29,7 +31,7 @@ public:
     void goToJail();
     void leaveJail();
     bool isBankrupt() const;
-
+    void bankrupt();
     void buyProperty(Property* prop);
 
     const MyString& getName() const;
@@ -42,4 +44,9 @@ public:
     bool useJailCard();
     bool ownsJailCard() const;
     void setPosition(int newPos);
+    bool ownsAllOfColor(Color color, const Board* board) const;
+    void printOwnedProperties() const;
+    void addOwnedProperty(Property* p);
+    void removeOwnedProperty(Property* p);
+
 };

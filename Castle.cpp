@@ -7,3 +7,7 @@ int Castle::getRentBonus(int baseRent) const {
 Mortgage* Castle::clone() const {
     return new Castle(*this);
 }
+
+MortgageType Castle::getType() const {
+    return MortgageType::Castle;
+}

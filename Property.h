@@ -2,9 +2,24 @@
 #include "Field.h"
 #include "MyString.h"
 #include "Mortgage.h"
-#include "Color.h"
+
 
 class Player;
+
+enum class Color {
+    Brown,
+    LightBlue,
+    Pink,
+    Orange,
+    Red,
+    Yellow,
+    Green,
+    DarkBlue,
+    Railroad,
+    Utility,
+    Tax,
+    None
+};
 
 class Property : public Field {
     MyString name;
@@ -37,5 +52,8 @@ public:
     int getPrice() const;
     int getBaseRent() const;
     Color getColor() const;
-    
+    Property* asProperty() override { return this; }
+    int getMortgageCount() const { return mortgageCount; }
+    Mortgage* getMortgageAt(int i) const { return mortgages[i]; }
+
 };

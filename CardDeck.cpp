@@ -59,3 +59,9 @@ Card* CardDeck::drawCard() {
 void CardDeck::returnCardToBottom(Card* card) {
     addCard(card);
 }
+
+void CardDeck::printContents() const {
+    for (int i = 0; i < size; ++i) {
+        std::cout << "- " << cards[i]->getDescription() << "\n";
+    }
+}

@@ -1,217 +1,177 @@
 #include "MyString.h"
-#include <algorithm>
-#include <utility>
-#pragma warning (disable : 4996)
+#include <cstring>
+#pragma warning(disable: 4996)
 
-void MyString::free()
+static unsigned roundToPowerOfTwo(unsigned n)
 {
-	delete[] data;
-	data = nullptr;
-	size = 0;
-	capacity = 0;
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+    return n;
 }
 
-void MyString::copyFrom(const MyString& other)
+static unsigned dataToAllocByStringLen(unsigned stringLength)
 {
-	capacity = other.capacity;
-	data = new char[capacity] {};
-	strcpy(data, other.data);
-	size = other.size;
+    return std::max(roundToPowerOfTwo(stringLength + 1), 16u);
 }
 
-void MyString::moveFrom(MyString&& other)
+MyString::MyString(size_t stringLength)
 {
-	size = other.size;
-	other.size = 0;
-	capacity = other.capacity;
-	other.capacity = 0;
-	data = other.data;
-	other.data = nullptr;
+    allocatedDataCapacity = dataToAllocByStringLen(stringLength);
+    data = new char[allocatedDataCapacity];
+    data[0] = '\0';
 }
 
-void MyString::resize(unsigned newCapacity)
+void MyString::resize(size_t newAllocatedDataCapacity)
 {
-	char* newData = new char[newCapacity + 1]{};
-	strcpy(newData, data);
-	delete[] data;
-	data = newData;
-	capacity = newCapacity;
+    char* resizedData = new char[newAllocatedDataCapacity];
+    strcpy(resizedData, data);
+    delete[] data;
+    data = resizedData;
+    allocatedDataCapacity = newAllocatedDataCapacity;
 }
 
-static unsigned roundToPowerOfTwo(unsigned v)
-{
-	unsigned res = 1;
-	while (res < v)
-	{
-		res *= 2;
-	}
-
-	return res;
+void MyString::free() {
+    delete[] data;
+    data = nullptr;
+    currentSize = allocatedDataCapacity = 0;
 }
 
-static unsigned getMaxResizeCapacity(unsigned v)
-{
-	return std::max(roundToPowerOfTwo(v), 16u); 
+void MyString::copyFrom(const MyString& other) {
+    currentSize = other.currentSize;
+    allocatedDataCapacity = other.allocatedDataCapacity;
+    data = new char[allocatedDataCapacity];
+    strcpy(data, other.data);
 }
-
 
 MyString::MyString() : MyString("") {}
 
 MyString::MyString(const char* str)
 {
-	if (!str)
-		str = "";
-
-	size = strlen(str);
-	capacity = getMaxResizeCapacity(size);
-	data = new char[capacity] {};
-	strcpy(data, str);
+    currentSize = strlen(str);
+    allocatedDataCapacity = dataToAllocByStringLen(currentSize);
+    data = new char[allocatedDataCapacity];
+    strcpy(data, str);
 }
 
 MyString::MyString(const MyString& other)
 {
-	copyFrom(other);
+    copyFrom(other);
 }
 
 MyString& MyString::operator=(const MyString& other)
 {
-	if (this != &other)
-	{
-		free();
-		copyFrom(other);
-	}
-
-	return *this;
-}
-
-MyString::MyString(MyString&& other) noexcept
-{
-	moveFrom(std::move(other));
-}
-
-MyString& MyString::operator=(MyString&& other) noexcept
-{
-	if (this != &other)
-	{
-		free();
-		moveFrom(std::move(other));
-	}
-	return *this;
+    if (this != &other) {
+        free();
+        copyFrom(other);
+    }
+    return *this;
 }
 
 MyString::~MyString()
 {
-	free();
+    free();
 }
 
-size_t MyString::getSize() const
+size_t MyString::length() const
 {
-	return size;
-}
-
-size_t MyString::getCapacity() const
-{
-	return capacity - 1;
+    return currentSize;
 }
 
 const char* MyString::c_str() const
 {
-	return data;
-}
-
-char& MyString::operator[](unsigned index)
-{
-
-	return data[index];
-}
-
-const char& MyString::operator[](unsigned index) const
-{
-
-	return data[index];
+    return data;
 }
 
 MyString& MyString::operator+=(const MyString& other)
 {
-	if (size + other.size + 1 > capacity)
-		resize(getMaxResizeCapacity(size + other.size));
+    if (currentSize + other.currentSize + 1 > allocatedDataCapacity) {
+        resize(dataToAllocByStringLen(currentSize + other.currentSize));
+    }
 
-	strncat(data, other.data, other.size);
+    strncat(data, other.data, other.currentSize);
+    currentSize += other.currentSize;
 
-	size += other.size;
+    return *this;
+}
 
-	return *this;
+char& MyString::operator[](size_t index)
+{
+    // if (index >= currentSize) {
+    //     throw std::out_of_range("Invalid index!");
+    // }
+    return data[index];
+}
+
+char MyString::operator[](size_t index) const
+{
+    // if (index >= currentSize) {
+    //     throw std::out_of_range("Invalid index!");
+    // }
+    return data[index];
 }
 
 MyString operator+(const MyString& lhs, const MyString& rhs)
 {
-	MyString res(lhs);
-	res += rhs;
-
-	return res;
+    MyString result(lhs.length() + rhs.length());
+    result += lhs;
+    result += rhs;
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const MyString& str)
 {
-	return os << str.data;
+    return os << str.c_str();
 }
 
 std::istream& operator>>(std::istream& is, MyString& str)
 {
-	char buff[1024]{};
-	is >> buff;
+    char buff[1024];
+    is >> buff; // since operator>> for strings is formatted input, we will use is >> instead of getline
+    // if you want to read with getline, create a separate function readStringLine(std::istream& is, MyString& str) 
+    // and use is.getline(buff, 1024) inside it
+    size_t buffLength = strlen(buff);
 
-	size_t buffStringSize = strlen(buff);
-	if (buffStringSize >= str.capacity)
-		str.resize(getMaxResizeCapacity(buffStringSize));
+    if (buffLength > str.allocatedDataCapacity) {
+        str.resize(dataToAllocByStringLen(buffLength));
+    }
 
-	strcpy(str.data, buff);
-	str.size = buffStringSize;
+    strcpy(str.data, buff);
+    str.currentSize = buffLength;
 
-	return is;
+    return is;
 }
-
-MyString MyString::substr(unsigned begin, unsigned howMany)
-{
-	if (begin + howMany > size)
-		return MyString("");
-
-	MyString res;
-	res.capacity = getMaxResizeCapacity(howMany + 1);
-	res.data = new char[res.capacity]{};
-	strncat(res.data, data + begin, howMany);
-	res.size = howMany;
-
-	return res;
-}
-
 
 bool operator==(const MyString& lhs, const MyString& rhs)
 {
-	return strcmp(lhs.c_str(), rhs.c_str()) == 0;
+    return strcmp(lhs.c_str(), rhs.c_str()) == 0;
 }
 
 bool operator!=(const MyString& lhs, const MyString& rhs)
 {
-	return !(lhs == rhs);
-}
-
-bool operator>(const MyString& lhs, const MyString& rhs)
-{
-	return strcmp(lhs.c_str(), rhs.c_str()) > 0;
-}
-
-bool operator>=(const MyString& lhs, const MyString& rhs)
-{
-	return strcmp(lhs.c_str(), rhs.c_str()) >= 0;
+    return !(lhs == rhs);
 }
 
 bool operator<(const MyString& lhs, const MyString& rhs)
 {
-	return strcmp(lhs.c_str(), rhs.c_str()) < 0;
+    return strcmp(lhs.c_str(), rhs.c_str()) < 0;
+}
+
+bool operator>(const MyString& lhs, const MyString& rhs)
+{
+    return !(lhs < rhs || lhs == rhs);
 }
 
 bool operator<=(const MyString& lhs, const MyString& rhs)
 {
-	return strcmp(lhs.c_str(), rhs.c_str()) <= 0;
+    return !(lhs > rhs);
+}
+
+bool operator>=(const MyString& lhs, const MyString& rhs)
+{
+    return !(lhs < rhs);
 }

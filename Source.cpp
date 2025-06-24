@@ -1,17 +1,21 @@
 #include "Monopoly.h"
-#include "Property.h"
-#include "ColorUtils.h"
+#include <ctime>    // за srand
+#include <cstdlib>  // за rand
 #include <iostream>
 
 int main() {
-    Monopoly game(2); // или 3, 4 и т.н.
+    std::srand(static_cast<unsigned>(std::time(nullptr))); // Инициализира генератора на случайни числа
 
-    while (true) {
-        game.playTurn();
-        std::cout << "Press Enter to continue to next player...\n";
-        std::cin.ignore(); // за да изчака Enter
-        std::cin.get();    // действителното Enter
-    }
+    std::cout << "Welcome to Monopoly!\n";
+
+    int playerCount;
+    do {
+        std::cout << "Enter number of players (2-6): ";
+        std::cin >> playerCount;
+    } while (playerCount < 2 || playerCount > 6);
+
+    Monopoly game(playerCount);
+    game.startGame();  // Върти ходове, докато остане 1 играч
 
     return 0;
 }

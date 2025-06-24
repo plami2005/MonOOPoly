@@ -7,3 +7,7 @@ int Cottage::getRentBonus(int baseRent) const {
 Mortgage* Cottage::clone() const {
     return new Cottage(*this);
 }
+
+MortgageType Cottage::getType() const {
+    return MortgageType::Cottage;
+}

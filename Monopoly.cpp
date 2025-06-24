@@ -5,7 +5,7 @@
 #include "GroupPaymentCard.h"
 #include "GoToFieldCard.h"
 #include "GetOutOfJailCard.h"
-#include "Color.h"
+
 #include <iostream>
 
 Monopoly::Monopoly(int playerCount) : playerCount(playerCount), currentPlayerIndex(0) {
@@ -26,12 +26,12 @@ Monopoly::Monopoly(int playerCount) : playerCount(playerCount), currentPlayerInd
     board->setField(7, new CardField(&cardDeck)); // Chance
     board->setField(10, nullptr); // Jail / Just visiting
     board->setField(17, new CardField(&cardDeck)); // Community Chest
+    board->setField(19, nullptr);// Parking
     board->setField(22, new CardField(&cardDeck)); // Chance
     board->setField(30, new GoToJailField());
     board->setField(33, new CardField(&cardDeck)); // Community Chest
     board->setField(36, new CardField(&cardDeck)); // Chance
     board->setField(38, new Property("Luxury Tax", 100, 0, Color::Tax));
-    std::cout << "OK до 12\n";
     board->setField(12, new Property("Electric Company", 150, 0, Color::Utility));
     board->setField(28, new Property("Water Works", 150, 0, Color::Utility));
 
@@ -64,7 +64,6 @@ Monopoly::Monopoly(int playerCount) : playerCount(playerCount), currentPlayerInd
     board->setField(37, new Property("Park Place", 350, 35, Color::DarkBlue));
     board->setField(39, new Property("Boardwalk", 400, 50, Color::DarkBlue));
 
-    CardDeck cardDeck;
     // Initialize 20 cards in the deck (10 Chance + 10 Community Chest)
     cardDeck.addCard(new GoToFieldCard(0, false, "Go to GO"));
     cardDeck.addCard(new GoToFieldCard(10, false, "Go to Jail"));
@@ -85,6 +84,7 @@ Monopoly::Monopoly(int playerCount) : playerCount(playerCount), currentPlayerInd
     cardDeck.addCard(new GroupPaymentCard(10, players, playerCount, "Collect $10 from each player"));
     cardDeck.addCard(new GroupPaymentCard(-10, players, playerCount, "Pay $10 to each player"));
     cardDeck.addCard(new GetOutOfJailCard("Another Get Out of Jail Free card"));
+    std::cout << "All cards added successfully to deck.\n";
 
 }
 
@@ -95,41 +95,200 @@ Monopoly::~Monopoly() {
     delete board;
 }
 
+Player* Monopoly::getWinner() const {
+    for (int i = 0; i < playerCount; ++i) {
+        if (!players[i]->isBankrupt())
+            return players[i];
+    }
+    return nullptr;
+}
+
 void Monopoly::startGame() {
     std::cout << "Game started with " << playerCount << " players.\n";
+
     while (!isGameOver()) {
         printGameState();
-        playTurn();
-        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-    }
-    std::cout << "Game over! Winner: " << players[currentPlayerIndex]->getName() << "\n";
-}
 
-void Monopoly::playTurn() {
+        bool repeatTurn;
+        do {
+            repeatTurn = playTurn();
+        } while (repeatTurn);
+
+        currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+
+        while (players[currentPlayerIndex]->isBankrupt()) {
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        }
+    }
+
+    Player* winner = getWinner();
+    if (winner)
+        std::cout << "\n Game over! The winner is " << winner->getName().c_str()
+        << " with $" << winner->getBalance() << "!\n";
+    else
+        std::cout << "\nNo winner found.\n";
+}
+bool Monopoly::playTurn() {
     Player* currentPlayer = players[currentPlayerIndex];
     std::cout << "\n" << currentPlayer->getName() << "'s turn.\n";
-    int dice1 = rand() % 6 + 1;
-    int dice2 = rand() % 6 + 1;
-    int steps = dice1 + dice2;
-    std::cout << "Rolled: " << dice1 << "+" << dice2 << " = " << steps << "\n";
+
 
     if (currentPlayer->getInJail()) {
-        std::cout << "Player is in jail and skips turn.\n";
-        currentPlayer->leaveJail();
-        return;
+        std::cout << "Player is in jail.\n";
+        if (currentPlayer->ownsJailCard()) {
+            std::cout << "Using 'Get Out of Jail Free' card.\n";
+            currentPlayer->useJailCard();
+        }
+        else {
+            int d1 = rand() % 6 + 1;
+            int d2 = rand() % 6 + 1;
+            std::cout << "Rolled: " << d1 << "+" << d2 << "\n";
+            if (d1 == d2) {
+                std::cout << "Double rolled! Released from jail.\n";
+                currentPlayer->leaveJail();
+            }
+            else {
+                std::cout << "Still in jail.\n";
+                return false;
+            }
+        }
     }
 
-    int oldPos = currentPlayer->getPosition();
-    currentPlayer->move(steps);
-    int newPos = currentPlayer->getPosition();
-    if (newPos < oldPos) {
-        std::cout << currentPlayer->getName() << " passed Start and receives $200. ";
-            bank.giveMoney(*currentPlayer, 200);
+    bool turnEnded = false;
+    bool rolled = false;
+
+    int dice1 = 0, dice2 = 0, steps = 0;
+    int oldPos = 0, newPos = 0;
+    int choice = 0;
+    int cntRolls = 0;
+
+
+    while (!turnEnded) {
+        std::cout << "\nChoose an option:\n";
+        std::cout << "1. Roll dice\n";
+        std::cout << "2. View properties\n";
+        std::cout << "3. Build on property\n";
+        std::cout << "4. Show player info\n";
+        std::cout << "5. Buy property from another player\n";
+        std::cout << "Your choice: ";
+
+         choice;
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            if (rolled) {
+                if (cntRolls >= 3)
+                {
+                    std::cout << "You've already rolled this turn.\n";
+                    break;
+                }
+            }
+
+             dice1 = rand() % 6 + 1;
+             dice2 = rand() % 6 + 1;
+             steps = dice1 + dice2;
+
+            std::cout << "Rolled: " << dice1 << " + " << dice2 << " = " << steps << "\n";
+
+             oldPos = currentPlayer->getPosition();
+            currentPlayer->move(steps);
+             newPos = currentPlayer->getPosition();
+
+            if (newPos < oldPos) {
+                std::cout << currentPlayer->getName() << " passed GO. Collects $200.\n";
+                bank.giveMoney(*currentPlayer, 200);
+            }
+
+            board->handleLanding(currentPlayer);
+            board->offerBuildingOptions(currentPlayer);
+
+            rolled = true;
+            cntRolls++;
+            if (dice1 != dice2) turnEnded = true;
+            break;
+
+        case 2:
+            currentPlayer->printOwnedProperties();
+            break;
+
+        case 3:
+            board->offerBuildingOptions(currentPlayer);
+            break;
+
+        case 4:
+            std::cout << "\n--- Player Info ---\n";
+            std::cout << "Name: " << currentPlayer->getName() << "\n";
+            std::cout << "Balance: $" << currentPlayer->getBalance() << "\n";
+            std::cout << "Position: " << currentPlayer->getPosition() << "\n";
+            std::cout << (currentPlayer->getInJail() ? "Status: In Jail\n" : "Status: Free\n");
+            std::cout << "Owned properties:\n";
+            currentPlayer->printOwnedProperties();
+            break;
+        case 5: {
+            int sellerIndex = -1;
+            std::cout << "Select seller:\n";
+            for (int i = 0; i < playerCount; ++i) {
+                if (i != currentPlayerIndex && !players[i]->isBankrupt()) {
+                    std::cout << i << ". " << players[i]->getName().c_str() << "\n";
+                }
+            }
+            std::cin >> sellerIndex;
+
+            if (sellerIndex < 0 || sellerIndex >= playerCount || sellerIndex == currentPlayerIndex || players[sellerIndex]->isBankrupt()) {
+                std::cout << "Invalid selection.\n";
+                break;
+            }
+
+            Player* seller = players[sellerIndex];
+            seller->printOwnedProperties();
+
+            int propertyIndex = -1;
+            std::cout << "Enter index of property to offer: ";
+            std::cin >> propertyIndex;
+
+            Property* prop = seller->getPropertyAt(propertyIndex);
+            if (!prop) {
+                std::cout << "Invalid property.\n";
+                break;
+            }
+
+            std::cout << "Enter amount to offer: $";
+            int offer;
+            std::cin >> offer;
+
+            std::cout << seller->getName().c_str() << ", do you accept the offer of $" << offer << " for "
+                << prop->getName().c_str() << "? (y/n): ";
+            char response;
+            std::cin >> response;
+
+            if (response == 'y' || response == 'Y') {
+                if (currentPlayer->getBalance() >= offer) {
+                    currentPlayer->pay(offer);
+                    seller->receive(offer);
+                    prop->setOwner(currentPlayer);
+                    currentPlayer->addOwnedProperty(prop);
+                    seller->removeOwnedProperty(prop);
+                    std::cout << "Transaction complete.\n";
+                }
+                else {
+                    std::cout << "Not enough money to complete transaction.\n";
+                }
+            }
+            else {
+                std::cout << "Seller declined the offer.\n";
+            }
+            break;
+        }
+        default:
+            std::cout << "Invalid choice.\n";
+        }
     }
-    Field* landed = board->getField(currentPlayer->getPosition());
-    if (landed)
-        landed->onLand(*currentPlayer);
+
+    std::cout << "End of turn. Current balance: $" << currentPlayer->getBalance() << "\n";
+    return false; // double rolls now end unless further extended
 }
+
 
 bool Monopoly::isGameOver() const {
     int activePlayers = 0;
@@ -153,3 +312,7 @@ Board* Monopoly::getBoard() const {
     return board;
 }
 
+void Monopoly::printCardDeck() const {
+    std::cout << "\n--- CARD DECK CONTENTS ---\n";
+    cardDeck.printContents();
+}

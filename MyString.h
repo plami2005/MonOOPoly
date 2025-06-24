@@ -3,43 +3,43 @@
 
 class MyString
 {
-	char* data;
-	size_t size;
-	size_t capacity;
-
-	void free();
-	void copyFrom(const MyString& other);
-	void moveFrom(MyString&& other);
-	void resize(unsigned newCapacity);
 public:
-	MyString();
-	MyString(const char* str);
-	MyString(const MyString& other);
-	MyString& operator=(const MyString& other);
-	MyString(MyString&& other) noexcept;
-	MyString& operator=(MyString&& other) noexcept;
-	~MyString();
+    MyString();
+    MyString(const char* data);
 
-	size_t getSize() const;
-	size_t getCapacity() const;
+    MyString(const MyString& other);
+    MyString& operator=(const MyString& other);
 
-	const char* c_str() const;
+    ~MyString();
 
-	char& operator[](unsigned index);
-	const char& operator[](unsigned indexs) const;
+    size_t length() const;
+    const char* c_str() const;
 
-	MyString& operator+=(const MyString& other);
+    MyString& operator+=(const MyString& other);
 
-	friend MyString operator+(const MyString& lhs, const MyString& rhs);
-	friend std::ostream& operator<<(std::ostream& os, const MyString& str);
-	friend std::istream& operator>>(std::istream& is, MyString& str);
+    char& operator[](size_t index);
+    char operator[](size_t index) const;
 
-	MyString substr(unsigned begin, unsigned howMany);
+    friend MyString operator+(const MyString& lhs, const MyString& rhs);
+    friend std::istream& operator>>(std::istream& is, MyString& str);
+
+private:
+    explicit MyString(size_t stringLength);
+
+    void resize(size_t newAllocatedDataCapacity);
+    void free();
+    void copyFrom(const MyString& other);
+
+    char* data = nullptr;
+    size_t currentSize = 0;
+    size_t allocatedDataCapacity = 0;
 };
+
+std::ostream& operator<<(std::ostream& os, const MyString& str);
 
 bool operator==(const MyString& lhs, const MyString& rhs);
 bool operator!=(const MyString& lhs, const MyString& rhs);
-bool operator>(const MyString& lhs, const MyString& rhs);
-bool operator>=(const MyString& lhs, const MyString& rhs);
 bool operator<(const MyString& lhs, const MyString& rhs);
 bool operator<=(const MyString& lhs, const MyString& rhs);
+bool operator>(const MyString& lhs, const MyString& rhs);
+bool operator>=(const MyString& lhs, const MyString& rhs);

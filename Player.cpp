@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Property.h"
+#include "MyVector.hpp"
 #include <iostream>
 
 void Player::resizeProperties() {
@@ -75,6 +76,12 @@ bool Player::isBankrupt() const {
     return balance < 0;
 }
 
+void Player::bankrupt() {
+    bankruptFlag = true;
+    balance = 0;
+    // Собственостите ще се обработят от Board
+}
+
 void Player::buyProperty(Property* prop) {
     if (propertyCount >= propertyCapacity)
         resizeProperties();
@@ -86,7 +93,13 @@ int Player::getBalance() const { return balance; }
 int Player::getPosition() const { return position; }
 bool Player::getInJail() const { return inJail; }
 int Player::getPropertyCount() const { return propertyCount; }
-Property* Player::getPropertyAt(int index) const { return ownedProperties[index]; }
+
+Property* Player::getPropertyAt(int index) const {
+    if (index < 0 || index >= propertyCount)
+        return nullptr;
+    return ownedProperties[index];
+}
+
 void Player::giveJailCard() {
     hasJailCard = true;
 }
@@ -107,3 +120,46 @@ void Player::setPosition(int newPos) {
     position = newPos % 40;
 }
 
+bool Player::ownsAllOfColor(Color color, const Board* board) const {
+    const MyVector<Property*>& allProps = board->getAllProperties();
+    for (size_t i = 0; i < allProps.size(); ++i) {
+        if (allProps[i]->getColor() == color && allProps[i]->getOwner() != this)
+            return false;
+    }
+    return true;
+}
+
+void Player::printOwnedProperties() const {
+    std::cout << getName() << "'s properties:\n";
+    for (int i = 0; i < propertyCount; ++i) {
+        std::cout << "- " << ownedProperties[i]->getName().c_str() << " ($" << ownedProperties[i]->getPrice() << ")\n";
+    }
+    if (propertyCount == 0)
+        std::cout << "(none)\n";
+}
+
+
+void Player::addOwnedProperty(Property* p) {
+    if (propertyCount >= propertyCapacity) {
+        int newCapacity = propertyCapacity * 2;
+        if (newCapacity == 0) newCapacity = 4;
+        Property** newArr = new Property * [newCapacity];
+        for (int i = 0; i < propertyCount; ++i)
+            newArr[i] = ownedProperties[i];
+        delete[] ownedProperties;
+        ownedProperties = newArr;
+        propertyCapacity = newCapacity;
+    }
+    ownedProperties[propertyCount++] = p;
+}
+
+void Player::removeOwnedProperty(Property* p) {
+    for (int i = 0; i < propertyCount; ++i) {
+        if (ownedProperties[i] == p) {
+            for (int j = i; j < propertyCount - 1; ++j)
+                ownedProperties[j] = ownedProperties[j + 1];
+            --propertyCount;
+            break;
+        }
+    }
+}

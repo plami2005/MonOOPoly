@@ -2,8 +2,6 @@
 #include "Player.h"
 #include "Cottage.h"
 #include "Castle.h"
-#include "Color.h"
-#include "ColorUtils.h"
 #include <iostream>
 
 void Property::resizeMortgages() {

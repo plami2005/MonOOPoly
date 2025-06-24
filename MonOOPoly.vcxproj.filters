@@ -78,6 +78,12 @@
     <ClInclude Include="ColorUtils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="HeterogeneousContainer.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyVector.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyString.cpp">
