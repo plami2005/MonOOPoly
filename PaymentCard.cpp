@@ -11,6 +11,10 @@ void PaymentCard::applyEffect(Player& player) {
     else {
         std::cout << player.getName() << " pays $" << -amount << ".\n";
         player.pay(-amount);
+        if (player.getBalance() < 0) 
+        {
+            std::cout << player.getName().c_str() << " couldn't pay and is bankrupt!\n";
+        }
     }
 }
 

@@ -1,7 +1,8 @@
 #include "Castle.h"
 
 int Castle::getRentBonus(int baseRent) const {
-    return baseRent * 50 / 100;
+    double coef = 0.5;
+    return (int)(baseRent * coef);
 }
 
 Mortgage* Castle::clone() const {

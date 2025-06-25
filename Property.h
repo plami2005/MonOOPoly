@@ -47,6 +47,7 @@ public:
     int calculateRent() const;
     Player* getOwner() const;
     void setOwner(Player* newOwner);
+    void removeOwnership();
 
     const MyString& getName() const;
     int getPrice() const;
@@ -55,5 +56,7 @@ public:
     Property* asProperty() override { return this; }
     int getMortgageCount() const { return mortgageCount; }
     Mortgage* getMortgageAt(int i) const { return mortgages[i]; }
+    bool isProperty() const override { return true; }
 
+    virtual Field* clone() const override;
 };

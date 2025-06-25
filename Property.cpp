@@ -59,14 +59,34 @@ Property::~Property() {
 }
 
 void Property::onLand(Player& player) {
+   
     if (!owner) {
-        std::cout << player.getName() << " landed on " << name << ". It costs $" << price << ".\n";
+        std::cout << player.getName() << " landed on " << name.c_str() << ". It costs $" << price << ". Buy it? (y/n): ";
+        char choice;
+        std::cin >> choice;
+
+        if (choice == 'y' || choice == 'Y') {
+            if (player.getBalance() >= price) {
+                player.pay(price);
+                setOwner(&player);
+                player.addOwnedProperty(this);
+                std::cout << player.getName() << " bought " << name.c_str() << "!\n";
+            }
+            else {
+                std::cout << "Not enough money to buy the property.\n";
+            }
+        }
     }
     else if (owner != &player) {
         int rent = calculateRent();
-        std::cout << player.getName() << " pays rent of $" << rent << " to " << owner->getName() << ".\n";
-        if (player.pay(rent))
-            owner->receive(rent);
+        std::cout << player.getName() << " landed on " << name.c_str() << " owned by " << owner->getName()
+            << ". Pays rent: $" << rent << ".\n";
+
+        if (player.getBalance() < rent) {
+            std::cout << player.getName() << " payed rent and went bankrupt!\n";
+        }
+        player.pay(rent);
+        owner->receive(rent);
     }
 }
 
@@ -92,11 +112,26 @@ int Property::calculateRent() const {
 Player* Property::getOwner() const { return owner; }
 void Property::setOwner(Player* newOwner) { owner = newOwner; }
 
+void Property::removeOwnership()
+{
+    owner = nullptr;
+    for (size_t i = 0; i < mortgageCount; i++)
+    {
+        delete mortgages[i];
+    }
+    mortgageCount = 0;
+}
+
 const MyString& Property::getName() const { return name; }
 int Property::getPrice() const { return price; }
 int Property::getBaseRent() const { return baseRent; }
 
 Color Property::getColor() const {
     return color;
+}
+
+Field* Property::clone() const
+{
+    return new Property();
 }
 

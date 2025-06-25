@@ -14,3 +14,8 @@ void GoToJailField::onLand(Player& player) {
         player.goToJail(); 
     }
 }
+
+Field* GoToJailField::clone() const
+{
+    return new GoToJailField(*this);
+}

@@ -1,7 +1,8 @@
 #include "Cottage.h"
 
 int Cottage::getRentBonus(int baseRent) const {
-    return baseRent * 15 / 100;
+    double coef = 0.15;
+    return (int)(baseRent * coef);
 }
 
 Mortgage* Cottage::clone() const {

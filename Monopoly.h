@@ -14,8 +14,16 @@ class Monopoly {
     Bank bank;
     CardDeck cardDeck;
 
+    void free();
+    void copyFrom(const Monopoly& other);
+    void moveFrom(Monopoly&& other);
+
 public:
     Monopoly(int playerCount);
+    Monopoly(const Monopoly& other);
+    Monopoly(Monopoly&& other) noexcept;
+    Monopoly& operator=(const Monopoly& other);
+    Monopoly& operator=(Monopoly&& other) noexcept;
     ~Monopoly();
 
     Player* getWinner() const;

@@ -13,7 +13,7 @@ class Player {
     int propertyCount;
     int propertyCapacity;
     bool hasJailCard = false;
-    bool bankruptFlag = false;
+    bool liquidated = false;
 
 
     void resizeProperties();
@@ -31,7 +31,6 @@ public:
     void goToJail();
     void leaveJail();
     bool isBankrupt() const;
-    void bankrupt();
     void buyProperty(Property* prop);
 
     const MyString& getName() const;
@@ -48,5 +47,8 @@ public:
     void printOwnedProperties() const;
     void addOwnedProperty(Property* p);
     void removeOwnedProperty(Property* p);
-
+    void setJailTurns(int turns);
+    int getJailTurns() const;
+    bool isLiquidated() const;
+    void liquidateAssets();
 };
